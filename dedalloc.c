@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<stdbool.h>
 
 typedef struct {
     size_t capacity;
@@ -11,6 +12,7 @@ typedef struct {
 arena_t dedalloc_init(size_t capacity)
 {
     void * start = malloc(capacity);
+   
     return (arena_t) {
         .capacity = capacity,
         .used = 0,
@@ -30,7 +32,19 @@ void * dedalloc_alloc(arena_t * arena, size_t size)
 
     size_t offset = arena->capacity - arena->used;
 
-    return (char*)arena->start + offset;
+    void * start_of_block = (char*)arena->start + offset;
+
+    memset(start_of_block, 0, size);
+
+    return start_of_block; 
+}
+
+bool arena_initialized(arena_t * arena)
+{
+    if (arena != NULL && arena->start != NULL)
+        return true;
+
+    return false;
 }
 
 size_t dedalloc_available(arena_t * arena)
@@ -46,6 +60,12 @@ void dedalloc_clean(arena_t * arena)
 int main()
 {
     arena_t arena = dedalloc_init(1024);
+
+    if (!arena_initialized(&arena)) {
+        printf("Couldn't initialize an Arena\n");
+        exit(1);
+    }
+    
     const char * data = "Hello";
     size_t data_len = strlen(data) + 1;
     
