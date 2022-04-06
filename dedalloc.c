@@ -24,10 +24,9 @@ void * dedalloc_alloc(arena_t * arena, size_t size)
 {
     if (size >= (arena->capacity - arena->used)) {
         //TODO: Handle reallocation if not enough size
-        printf("Arena doen't have enough space\n");
-        exit(1);
+        return NULL;
     }
-
+    
     arena->used += size;
 
     size_t offset = arena->capacity - arena->used;
@@ -39,7 +38,7 @@ void * dedalloc_alloc(arena_t * arena, size_t size)
     return start_of_block; 
 }
 
-bool arena_initialized(arena_t * arena)
+bool dedalloc_arena_is_initialized(arena_t * arena)
 {
     if (arena != NULL && arena->start != NULL)
         return true;
@@ -61,7 +60,7 @@ int main()
 {
     arena_t arena = dedalloc_init(1024);
 
-    if (!arena_initialized(&arena)) {
+    if (!dedalloc_arena_is_initialized(&arena)) {
         printf("Couldn't initialize an Arena\n");
         exit(1);
     }
@@ -70,6 +69,12 @@ int main()
     size_t data_len = strlen(data) + 1;
     
     char * str = (char*)dedalloc_alloc(&arena, data_len * sizeof(char));
+
+    if (str == NULL) {
+        printf("Arena is empty!\n");
+        dedalloc_clean(&arena);
+        exit(1);
+    }
     
     const char * data2 = "Some things in life are bad\n"
                          "They can really make you mad\n"
@@ -84,6 +89,12 @@ int main()
     size_t data2_len = strlen(data2) + 1;
     
     char * str2 = (char*)dedalloc_alloc(&arena, data2_len * sizeof(char));
+
+    if (str2 == NULL) {
+        printf("Stop this madness!\n");
+        dedalloc_clean(&arena);
+        exit(1);
+    }
 
     
     strncpy(str, data, strlen(data));
