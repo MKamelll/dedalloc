@@ -1,6 +1,6 @@
 FLAGS=-Wall -Wextra -pedantic
 
-dedalloc: dedalloc.c
+test: test.c
 	mkdir -p build
 	$(CC) ${FLAGS} -o build/$@ $^
 
