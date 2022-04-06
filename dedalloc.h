@@ -14,7 +14,6 @@ arena_t dedalloc_init(size_t capacity);
 void * dedalloc_alloc(arena_t * arena, size_t size);
 bool dedalloc_arena_is_initialized(arena_t * arena);
 size_t dedalloc_available(arena_t * arena);
-size_t dedalloc_available(arena_t * arena);
 void dedalloc_clean(arena_t * arena);
 
 #endif // DEDALLOC_H
